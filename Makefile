@@ -1,56 +1,43 @@
-
-# Detect the operating system
-OS := $(shell uname -s)
-
-# Compiler settings
+# Compiler settings - Can change to gcc, clang, etc.
 CXX := g++
-CXXFLAGS := -Wall -std=c++11
-LDFLAGS :=
+# Compiler flags, e.g., CXXFLAGS += -std=c++11 for C++11 support
+CXXFLAGS += -Iinclude -Wall -g
 
-# Project name
-PROJECT := pda-runner
+PROGRAM := pda-runner
 
-# Source and binary settings
-SRCDIR := src
-BINDIR := bin
-TARGET := $(BINDIR)/$(PROJECT)
+# If the first command in a recipe fails, just return an error
+# rather than continuing with other commands
+.ONESHELL:
 
-# Source files
-SOURCES := $(SRCDIR)/main.cpp
-OBJECTS := $(SOURCES:$(SRCDIR)/%.cpp=$(BINDIR)/%.o)
+# Define .cpp source files
+SOURCES := $(wildcard src/*.cpp)
 
-# Platform specific adjustments
+# Define the output program
+TARGET := bin/$(PROGRAM)
+
+# Platform-specific modifications
 ifeq ($(OS),Windows_NT)
-    TARGET := $(BINDIR)/$(PROJECT).exe
-    RM := del /Q
+    RM = del /Q
     FixPath = $(subst /,\,$1)
+    TARGET := $(TARGET).exe
 else
-    RM := rm -f
+    RM = rm -f
     FixPath = $1
 endif
 
-# Default rule
+# Default make
 all: $(TARGET)
 
-# Link the target
-$(TARGET): $(OBJECTS)
-	$(CXX) $(LDFLAGS) -o $@ $^
+# Link the target with all object files (force recompile every time)
+$(TARGET): $(SOURCES)
+	@mkdir -p bin
+	$(CXX) $(CXXFLAGS) -o $@ $(SOURCES)
 
-# Compile the source files into objects
-$(OBJECTS): $(BINDIR)/%.o : $(SRCDIR)/%.cpp
-	@mkdir -p $(BINDIR)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Clean the build
+# Clean up build files
 clean:
-	$(RM) $(call FixPath,$(OBJECTS) $(TARGET))
+	$(RM) $(call FixPath,bin/*)
 
-# Phony targets
-.PHONY: all clean
+run: all
+	./$(TARGET)
 
-# Rule for running the program
-run: $(TARGET)
-	./$(call FixPath,$(TARGET))
-
-
-
+.PHONY: all clean run
