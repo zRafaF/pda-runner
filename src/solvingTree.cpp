@@ -23,7 +23,7 @@ void SolvingTree::insertChild(std::shared_ptr<SolvingTree> child) {
 }
 
 SolvingTree::ComputationResult SolvingTree::compute(std::shared_ptr<SolvingTree> _myPointer) {
-    SolvingTree::ComputationResult result(false, std::vector<SolvingTree::State>());
+    SolvingTree::ComputationResult result(false, std::stack<SolvingTree::State>());
 
     if (depth > MAX_DEPTH) {
         return result;
@@ -43,6 +43,7 @@ SolvingTree::ComputationResult SolvingTree::compute(std::shared_ptr<SolvingTree>
             insertChild(newChild);
             auto childResult = newChild->compute(newChild);
             if (childResult.isAccepted) {
+                childResult.computation.push(state);
                 return childResult;
             }
         }
@@ -50,7 +51,7 @@ SolvingTree::ComputationResult SolvingTree::compute(std::shared_ptr<SolvingTree>
 
     if (currentNode.isFinal && state.currentWord == "&") {
         result.isAccepted = true;
-        result.computation.push_back(state);
+        result.computation.push(state);
         return result;
     }
     return result;
@@ -72,7 +73,10 @@ SolvingTree::TransitionComputingResult SolvingTree::computeTransition(Pda::Trans
                     result.state.stack.pop();
                 }
 
-                for (auto c : transition.xy) {
+                std::string reversedXy = transition.xy;
+                std::reverse(reversedXy.begin(), reversedXy.end());
+
+                for (auto c : reversedXy) {
                     if (c != '&')
                         result.state.stack.push(c);
                 }

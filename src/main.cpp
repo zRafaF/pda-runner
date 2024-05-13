@@ -77,22 +77,17 @@ int main() {
     std::vector<std::string> words = inputWords();
     Solver solver(pda);
 
-#ifdef DEBUG
-    pda->printPda();
-#endif
-
     for (auto word : words) {
-#ifdef DEBUG
-        std::cout << "Solving word: " << word << std::endl;
-#endif
-
         auto result = solver.solve(word);
 
         std::cout << word << ": " << (result.isAccepted ? "sim" : "nao") << std::endl;
 
-        for (auto state : result.computation) {
-            std::cout << state << " |-" << std::endl;
+        while (!result.computation.empty()) {
+            std::cout << result.computation.top() << (result.computation.size() == 1 ? "." : " |-") << std::endl;
+            result.computation.pop();
         }
+
+        std::cout << std::endl;
     }
 
     return 0;

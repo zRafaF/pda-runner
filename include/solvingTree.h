@@ -25,9 +25,9 @@ class SolvingTree {
 
     struct ComputationResult {
         bool isAccepted;
-        std::vector<SolvingTree::State> computation;
+        std::stack<SolvingTree::State> computation;
 
-        ComputationResult(bool _isAccepted, std::vector<SolvingTree::State> _computation) : isAccepted(_isAccepted), computation(_computation) {}
+        ComputationResult(bool _isAccepted, std::stack<SolvingTree::State> _computation) : isAccepted(_isAccepted), computation(_computation) {}
     };
 
     struct TransitionComputingResult {
@@ -61,4 +61,5 @@ class SolvingTree {
     std::vector<std::shared_ptr<SolvingTree>> childrenTrees;
     unsigned int depth = 0;
 };
+
 std::ostream& operator<<(std::ostream& os, const SolvingTree::State& state);
