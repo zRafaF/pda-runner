@@ -1,9 +1,22 @@
+Rafael Farias Meneses (2263831)
+
 Estou usando features principalmente do C++11 porém utilizei a versão mais recente do GCC com a versão 17 do C++.
 
 Também utilizei a versão 4.4.1 do Make, testei ambos no Windows e no Linux.
+
+## Compilando e executando o projeto
 
 Para compilar o projeto, basta executar o comando `make` na pasta raiz do projeto. Isso irá gerar um executável chamado `pda-runner` na pasta `bin`.
 
 Você também pode compilar e executar o projeto com o comando `make run`.
 
 A documentação do projeto é em sua maioria no estilo Doxygen e está normalmente nos arquivos `.h` do projeto.
+
+## Detalhes da implementação
+
+O projeto foi implementado em C++ e possui 3 classes principais:
+* `Pda`: Representa um autômato de pilha. Seus nodos são armazenados em um hashmap e cada nodo armazena todas as possíveis transições para outros nodos.
+
+* `SolvingTree`: É responsável por encontrar transições válidas para cada estado do autômato. Cada nodo da árvore de solução armazena o estado atual (nodo, palavra e pilha). A árvore é construída recursivamente para cada uma das transições válidas para aquele estado.
+
+* `Solver`: Responsável por criar o nodo raiz da árvore de solução e resolver o autômato de pilha via recursão.
