@@ -23,10 +23,13 @@ class Pda {
         Transition(size_t _origin, char _c, char _T, std::string _xy, size_t _target) : originIdx(_origin), c(_c), T(_T), xy(_xy), targetIdx(_target) {}
     };
 
+    /**
+     * @brief Estrutura de nodo do PDA
+     */
     struct Node {
-        std::string name;
-        std::vector<Pda::Transition> transitions;
-        bool isFinal;
+        std::string name;                          // Nome do nodo
+        std::vector<Pda::Transition> transitions;  // Transições do nodo
+        bool isFinal;                              // Indica se o nodo é final
 
         Node(std::string _name, std::vector<Transition> _transitions, bool _isFinal) : name(_name), transitions(_transitions), isFinal(_isFinal) {}
     };
@@ -49,7 +52,9 @@ class Pda {
     /**
      * @brief Insere um novo nodo no PDA
      *
-     * @param _node Novo nó **OBS:** O índice deve ser preenchido
+     * @param _transition Transição a ser inserida
+     *
+     * @return Vetor de transições do nodo de origem
      */
     std::vector<Pda::Transition> addTransition(Pda::Transition _transition);
     template <typename... Args>
@@ -65,6 +70,13 @@ class Pda {
 
     std::map<size_t, Pda::Node> getNodes() { return nodes; }
 
+    /**
+     * @brief Define os estados finais do PDA. \n Joga uma exceção caso o estado final não exista
+     *
+     * @param _finalStates Vetor de índices dos estados finais
+     *
+     * @return Mapa de nodos do PDA
+     */
     std::map<size_t, Pda::Node> setFinalStates(std::vector<int> _finalStates);
 
    private:

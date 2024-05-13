@@ -1,0 +1,9 @@
+Estou usando features principalmente do C++11 porém utilizei a versão mais recente do GCC com a versão 17 do C++.
+
+Também utilizei a versão 4.4.1 do Make, testei ambos no Windows e no Linux.
+
+Para compilar o projeto, basta executar o comando `make` na pasta raiz do projeto. Isso irá gerar um executável chamado `pda-runner` na pasta `bin`.
+
+Você também pode compilar e executar o projeto com o comando `make run`.
+
+A documentação do projeto é em sua maioria no estilo Doxygen e está normalmente nos arquivos `.h` do projeto.

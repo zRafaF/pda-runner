@@ -15,9 +15,6 @@ SolvingTree::SolvingTree(SolvingTree::State _state, std::shared_ptr<SolvingTree>
     depth = _parent->depth + 1;
 }
 
-/**
- * Insere um filho na árvore de solução
- */
 void SolvingTree::insertChild(std::shared_ptr<SolvingTree> child) {
     childrenTrees.push_back(child);
 }
@@ -25,22 +22,24 @@ void SolvingTree::insertChild(std::shared_ptr<SolvingTree> child) {
 SolvingTree::ComputationResult SolvingTree::compute(std::shared_ptr<SolvingTree> _myPointer) {
     SolvingTree::ComputationResult result(false, std::stack<SolvingTree::State>());
 
-    if (depth > MAX_DEPTH) {
+    // Verifica se a profundidade máxima foi atingida
+    if (depth > MAX_DEPTH)
         return result;
-    }
+
     std::vector<Pda::Transition> possibleTransitions;
     const auto currentNode = pda->getNodes().at(state.currentNodeIdx);
 
+    // Para cada transição do nó atual
     for (auto transition : currentNode.transitions) {
+        // Verifica se a transição é válida
         auto transactionResult = computeTransition(transition);
-        // std::cout << "Current State: " << state << std::endl;
 
-        // std::cout << "Computing transition: " << transition << std::endl;
-
-        // std::cout << "Transaction result: " << transactionResult.isAccepted << "\n\n\n\n";
         if (transactionResult.isAccepted) {
+            // Adiciona a nova arvore na lista de filhos
             auto newChild = std::make_shared<SolvingTree>(transactionResult.state, _myPointer);
             insertChild(newChild);
+
+            // Verifica se a palavra foi aceita
             auto childResult = newChild->compute(newChild);
             if (childResult.isAccepted) {
                 childResult.computation.push(state);
@@ -49,11 +48,12 @@ SolvingTree::ComputationResult SolvingTree::compute(std::shared_ptr<SolvingTree>
         }
     }
 
+    // Condição de parada da recursão
     if (currentNode.isFinal && state.currentWord == "&") {
         result.isAccepted = true;
         result.computation.push(state);
-        return result;
     }
+
     return result;
 }
 
@@ -63,23 +63,29 @@ SolvingTree::TransitionComputingResult SolvingTree::computeTransition(Pda::Trans
     if (transition.originIdx == result.state.currentNodeIdx) {
         if (transition.c == '&' || transition.c == result.state.currentWord[0]) {
             if (transition.c != '&') {
+                // Remove o primeiro caractere da palavra
                 result.state.currentWord = result.state.currentWord.substr(1);
+
+                // Se a palavra acabou, adiciona um & para indicar que a palavra foi consumida
                 if (result.state.currentWord.empty()) {
                     result.state.currentWord = "&";
                 }
             }
+
+            // Verifica se o topo da pilha é igual ou vazio
             if (transition.T == result.state.stack.top() || transition.T == '&') {
                 if (transition.T != '&') {
                     result.state.stack.pop();
                 }
 
+                // Adiciona os caracteres da string xy invertidos na pilha
                 std::string reversedXy = transition.xy;
                 std::reverse(reversedXy.begin(), reversedXy.end());
-
                 for (auto c : reversedXy) {
                     if (c != '&')
                         result.state.stack.push(c);
                 }
+
                 result.state.currentNodeIdx = transition.targetIdx;
                 result.isAccepted = true;
             }
@@ -89,6 +95,7 @@ SolvingTree::TransitionComputingResult SolvingTree::computeTransition(Pda::Trans
     return result;
 }
 
+// Overload do operador <<
 std::ostream& operator<<(std::ostream& os, const SolvingTree::State& state) {
     os << "(q" << state.currentNodeIdx << ", " << state.currentWord << ", ";
     std::stack<char> stack_copy = state.stack;
@@ -97,6 +104,7 @@ std::ostream& operator<<(std::ostream& os, const SolvingTree::State& state) {
         os << stack_copy.top();
         stack_copy.pop();
     }
+
     os << ")";
     return os;
 }

@@ -9,15 +9,15 @@
 
 class Solver {
    public:
-    struct SolveResult {
-        bool isAccepted;
-        std::vector<SolvingTree::State> computation;
-
-        SolveResult(bool _isAccepted, std::vector<SolvingTree::State> _computation) : isAccepted(_isAccepted), computation(_computation) {}
-    };
-
     Solver(std::shared_ptr<Pda> _pda);
 
+    /**
+     * @brief Resolve o PDA
+     *
+     * @param _input Palavra a ser resolvida
+     *
+     * @return Resultado da resolução
+     */
     SolvingTree::ComputationResult solve(std::string _input);
 
    private:

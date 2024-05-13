@@ -1,5 +1,3 @@
-// #define DEBUG
-
 #include <iostream>
 #include <memory>
 #include <string>
@@ -8,6 +6,7 @@
 #include "pda.h"
 #include "solver.h"
 
+// Função que lê a entrada do PDA
 std::shared_ptr<Pda> inputPda() {
     std::string input;
 
@@ -57,6 +56,7 @@ std::shared_ptr<Pda> inputPda() {
     return std::make_shared<Pda>(transitions, finalStates);
 }
 
+// Função que lê as palavras a serem testadas, terminando com um *
 std::vector<std::string> inputWords() {
     std::vector<std::string> words;
 
@@ -77,16 +77,17 @@ int main() {
     std::vector<std::string> words = inputWords();
     Solver solver(pda);
 
+    // Para cada palavra
     for (auto word : words) {
+        // Resolve o PDA
         auto result = solver.solve(word);
 
+        // Imprime o resultado
         std::cout << word << ": " << (result.isAccepted ? "sim" : "nao") << std::endl;
-
         while (!result.computation.empty()) {
             std::cout << result.computation.top() << (result.computation.size() == 1 ? "." : " |-") << std::endl;
             result.computation.pop();
         }
-
         std::cout << std::endl;
     }
 
