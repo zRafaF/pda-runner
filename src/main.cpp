@@ -1,22 +1,23 @@
+// #define DEBUG
+
 #include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "pda.h"
-#include "solvingTree.h"
+#include "solver.h"
 
-Pda inputPda() {
-    std::vector<Pda::Transition> transitions;
-
+std::shared_ptr<Pda> inputPda() {
     std::string input;
 
+    // Pula o primeiro argumento já que os nodos são computados a partir das transições
     std::getline(std::cin, input, ' ');
-    std::stoi(input);
 
     std::getline(std::cin, input);
     const int numOfTransitions = std::stoi(input);
 
+    std::vector<Pda::Transition> transitions;
     for (int i = 0; i < numOfTransitions; i++) {
         std::getline(std::cin, input, ' ');
         const int originState = std::stoi(input);
@@ -53,7 +54,7 @@ Pda inputPda() {
         finalStates.push_back(std::stoi(input));
     }
 
-    return Pda(transitions, finalStates);
+    return std::make_shared<Pda>(transitions, finalStates);
 }
 
 std::vector<std::string> inputWords() {
@@ -72,11 +73,26 @@ std::vector<std::string> inputWords() {
 }
 
 int main() {
-    Pda pda = inputPda();
+    std::shared_ptr<Pda> pda = inputPda();
     std::vector<std::string> words = inputWords();
+    Solver solver(pda);
+
+#ifdef DEBUG
+    pda->printPda();
+#endif
 
     for (auto word : words) {
-        std::shared_ptr<SolvingTree> tree(new SolvingTree(std::make_shared<Pda>(pda), word));
+#ifdef DEBUG
+        std::cout << "Solving word: " << word << std::endl;
+#endif
+
+        auto result = solver.solve(word);
+
+        std::cout << word << ": " << (result.isAccepted ? "sim" : "nao") << std::endl;
+
+        for (auto state : result.computation) {
+            std::cout << state << " |-" << std::endl;
+        }
     }
 
     return 0;

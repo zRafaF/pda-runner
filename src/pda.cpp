@@ -34,3 +34,9 @@ void Pda::printPda() {
         std::cout << "\n";
     }
 }
+
+std::ostream& operator<<(std::ostream& os, const Pda::Transition& transition) {
+    os << transition.originIdx << ", " << transition.c << ", " << transition.T << "/" << transition.xy << " | target: " << transition.targetIdx;
+
+    return os;
+}

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include <stack>
 #include <string>
 #include <vector>
 
@@ -10,11 +9,25 @@
 
 class Solver {
    public:
-    Solver(Pda _pda);
+    struct SolveResult {
+        bool isAccepted;
+        std::vector<SolvingTree::State> computation;
+
+        SolveResult(bool _isAccepted, std::vector<SolvingTree::State> _computation) : isAccepted(_isAccepted), computation(_computation) {}
+    };
+
+    Solver(std::shared_ptr<Pda> _pda);
+
+    SolvingTree::ComputationResult solve(std::string _input);
 
    private:
-    Pda pda;
+    /**
+     * @brief Inicializa as variáveis do solver
+     */
+    void initialize(std::string _input);
+
+    std::shared_ptr<Pda> pda;
     std::string input;
     std::vector<SolvingTree::State> computation;
-    std::unique_ptr<SolvingTree> solvingTree;
+    std::shared_ptr<SolvingTree> solvingTree;
 };

@@ -31,22 +31,14 @@ class Pda {
         Node(std::string _name, std::vector<Transition> _transitions, bool _isFinal) : name(_name), transitions(_transitions), isFinal(_isFinal) {}
     };
 
-    /**
-     * @brief Construtor do PDA vazio
-     */
     Pda() {
     }
-
-    /**
-     * @brief Constrói um PDA com as transições preenchidas
-     */
     template <typename... Args>
     Pda(Pda::Transition _transition, Args... args, std::vector<int> _finalStates) {
         addTransition(_transition);
         addTransition(_transition, args...);
         setFinalStates(_finalStates);
     }
-
     Pda(std::vector<Pda::Transition> _transitions, std::vector<int> _finalStates) {
         for (auto transition : _transitions) {
             addTransition(transition);
@@ -54,15 +46,12 @@ class Pda {
         setFinalStates(_finalStates);
     }
 
-    // std::map<size_t, std::vector<Pda::Transition>> getTransitions() { return transitions; }
-
     /**
      * @brief Insere um novo nodo no PDA
      *
      * @param _node Novo nó **OBS:** O índice deve ser preenchido
      */
     std::vector<Pda::Transition> addTransition(Pda::Transition _transition);
-
     template <typename... Args>
     void addTransition(Pda::Transition _transition, Args... args) {
         addTransition(_transition);
@@ -74,9 +63,12 @@ class Pda {
      */
     void printPda();
 
+    std::map<size_t, Pda::Node> getNodes() { return nodes; }
+
     std::map<size_t, Pda::Node> setFinalStates(std::vector<int> _finalStates);
 
    private:
     std::map<size_t, Pda::Node> nodes;
-    std::stack<std::string> stack;
 };
+
+std::ostream& operator<<(std::ostream& os, const Pda::Transition& transition);
